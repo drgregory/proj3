@@ -46,31 +46,22 @@ int main( int argc, char **argv )
   srand(time(NULL));
 
   /* Multiples-of-32, +/- 1 */
-  int test_sizes[] = 
-      { 64, 65, 96, 97, 127, 128, 129, 191, 192, 229, 255, 256, 257,
-      319, 320, 321, 417, 479, 480, 511, 512, 639, 640, 767, 768, 769 };
 
-  int nsizes = sizeof(test_sizes)/sizeof(test_sizes[0]);
+  int test_sizes[] =  {64,65,95,96,97,127,128,129,159,160,161,191,192,193,223,224,225,255,256,257,287,288,289,319,320,321,351,352,353,383,384,385,415,416,417,447,448,449,479,480,481,511,512,513,543,544,545,575,576,577,607,608,609,639,640,641,671,672,673,703,704,705,735,736,737,767,768,769,799,800,801,831,832,833,863,864,865,895,896,897,927,928,929,959,960,961,991,992,993,1023,1024};
 
-  /* assume last size is also the largest size */
-  int nmax = test_sizes[nsizes-1];
-
-  /* allocate memory for all problems */
-  float* buf = NULL;
-  buf = (float*) malloc (3 * nmax * nmax * sizeof(float));
-  if (buf == NULL) die ("failed to allocate largest problem size");
+  // subset of above values, you can use this while developing your code
+//  int test_sizes[] = { 64, 65, 96, 97, 127, 128, 129, 191, 192, 229, 255, 256, 257, 319, 320, 321, 417, 479, 480, 511, 512, 639, 640, 767, 768, 1023, 1024 };
 
   /* For each test size */
   for (int isize = 0; isize < sizeof(test_sizes)/sizeof(test_sizes[0]); ++isize)
   {
     int n = test_sizes[isize];
-    if (argc > 1)
-      n = 64;
 
     /* Create and fill 3 random matrices A,B,C*/
-    float* A = buf + 0;
-    float* B = A + nmax*nmax;
-    float* C = B + nmax*nmax;
+
+    float *A = malloc(n*n*sizeof(float));
+    float *B = malloc(n*n*sizeof(float));
+    float *C = malloc(n*n*sizeof(float));
 
     fill (A, n*n);
     fill (B, n*n);
@@ -93,30 +84,7 @@ int main( int argc, char **argv )
       /* compute Gflop/s rate */
       Gflop_s = 2e-9 * n_iterations * n * n * n / seconds;
     }
-    /*    if (n == 3) {
-	for (int printer = 0; printer < n*n; printer += 1) {
-	if (printer % 3 == 0) {
-	    printf("\n");
-	}
-	printf("%f ", *(C+printer));
-    }
-		printf("\n");
-
-	for (int printer = 0; printer < n*n; printer += 1) {
-	if (printer % 3 == 0) {
-	    printf("\n");
-	}
-	printf("%f ", *(A+printer));
-    }
-	printf("\n");
-	for (int printer = 0; printer < n*n; printer += 1) {
-	if (printer % 3 == 0) {
-	    printf("\n");
-	}
-	printf("%f ", *(B+printer));
-    }
-	printf("\n\n");
-    }*/
+    
     printf( "%d by %d matrix \t %g Gflop/s\n", n, n, Gflop_s );
     
     /* Ensure that error does not exceed the theoretical error bound */
@@ -141,11 +109,10 @@ int main( int argc, char **argv )
 	printf( "FAILURE: error in matrix multiply exceeds an acceptable margin\n" );
 	return -1;
       }
-    if (argc > 1)
-      exit(0);
+    free(A);
+    free(B);
+    free(C);
   }
 
-  free(buf);
-  
   return 0;
 }
