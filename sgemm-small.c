@@ -23,12 +23,7 @@ void square_sgemm( int n, float *A, float *B, float *C ) {
 	__m128 partialSum5;
 	__m128 partialSum6;
 	__m128 partialSum7;
-	/*
-	float pSum[4];
-	float pSum1[4];
-	float pSum2[4];
-	float pSum3[4];
-	*/
+	
 	float cij=0.0, cij1=0.0, cij2=0.0, cij3=0.0, cij4=0.0, cij5=0.0, cij6=0.0, cij7=0.0;
   //transpose A
   for (i = 0; i < n; i ++) {
@@ -44,12 +39,6 @@ void square_sgemm( int n, float *A, float *B, float *C ) {
 			_MM_EXTRACT_FLOAT(temp, x, 3);
 			At[i+(j+3)*n] = temp;
 			
-			/*
-			At[i+j*n] = A[j + i*n];
-			At[i+(j+1)*n] = A[j + 1 + i*n];
-			At[i+(j+2)*n] = A[j + 2 + i*n];
-			At[i+(j+3)*n] = A[j + 3 + i*n];
-			*/
 		}
 		for (; j<n; j ++) {
 		    At[i+j*n] = A[j+i*n];
