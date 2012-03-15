@@ -3,8 +3,6 @@
 #include <emmintrin.h>
 #include <x86intrin.h>
 
-#define NUM_REGISTERS 4;
-
 void square_sgemm( int n, float *A, float *B, float *C ) {
 	int i, j , k, l;
 	//int count = 0; //for debug
