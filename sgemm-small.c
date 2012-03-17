@@ -38,13 +38,13 @@ void square_sgemm( int n, float *A, float *B, float *C ) {
     __m128 c1;
     __m128 c2;
 
-    for (i = 0; i < n; i ++) {
+    /*for (i = 0; i < n; i ++) {
 	for (j = 0; j < n; j ++) {
 	    At[i + j*n] = A[j + i *n];
 	}
-    }
+	}*/
 
-		/* for (i = 0; i < n; i ++) {
+    for (i = 0; i < n; i ++) {
 	for (j = 0; j < n/4*4; j += 4) {
 			
 	    x = _mm_loadu_ps(A + j + i*n);
@@ -57,7 +57,8 @@ void square_sgemm( int n, float *A, float *B, float *C ) {
 	    _MM_EXTRACT_FLOAT(temp, x, 3);
 	    At[i+(j+3)*n] = temp;
 			
-	    }*/
+	}
+	}
     /*
 	for (i = 0; i < n; i += 1) {
 	    for (j = 0; j < n; j += 1) {
@@ -132,7 +133,19 @@ void square_sgemm( int n, float *A, float *B, float *C ) {
 		c2 = _mm_add_ps(c2, partialSum6);
 		//cleanup k
 		if (k < n) {
+		    cij = 0.0;
+		    cij1 = 0.0;
+		    cij2 = 0.0;
+		    cij3 = 0.0;
+		    cij4 = 0.0;
+		    cij5 = 0.0;
+		    cij6 = 0.0;
+		    cij7 = 0.0;
 		    for (; k < n; k ++) {
+			printf("cleanup K");
+			/*printf(" %d ", k + j*n);
+			printf(" %d ", k + (j+1)*n);
+			printf(" \n ");*/
 			cij += At[k+i*n] * B[k+j*n];
 			cij1 += At[k+(i+1)*n] * B[k+j*n];
 			cij2 += At[k+(i+2)*n] * B[k+j*n];
@@ -142,6 +155,7 @@ void square_sgemm( int n, float *A, float *B, float *C ) {
 			cij6 += At[k+(i+2)*n] * B[k+(j+1)*n];
 			cij7 += At[k+(i+3)*n] * B[k+(j+1)*n];
 		    }
+		    // printf(" \n ");
 		    //float ca[] = {cij, cij1, cij2, cij3, cij4, cij5, cij6, cij7}; //LOOK FOR ALTERNATIVE
 		    //partialSum = _mm_loadu_ps(ca);
 		    //partialSum1 = _mm_loadu_ps(ca + 4);
@@ -150,12 +164,16 @@ void square_sgemm( int n, float *A, float *B, float *C ) {
 		    c1 = _mm_add_ps(c1, partialSum);
 		    c2 = _mm_add_ps(c2, partialSum1);
 		}
+		//printf(" %d ", i + j*n);
+		//printf(" %d ", i + (j+1)*n);
+		//printf(" \n ");
 		_mm_storeu_ps(C + i + j*n, c1);
 		_mm_storeu_ps(C + i + (j+1)*n, c2);
 		count += 8; //for debug
 		}
 	//cleanup j
 	for (; j < n; j++) {
+	    printf("cleanup J");
 	    //cij = C[i+j*n];
 	    c1 = _mm_loadu_ps(C+i+j*n);
 	    partialSum = _mm_setzero_ps();
@@ -205,18 +223,214 @@ void square_sgemm( int n, float *A, float *B, float *C ) {
 	//NEED TO CLEANUP i
     }
       /* For each row i of A */
-    for (; i < n; ++i)
+    for (; i < n; ++i) {
+	printf("cleanup");
     /* For each column j of B */
     for (int j = 0; j < n; ++j) 
     {
       /* Compute C(i,j) */
-    float cij = C[i+j*n];
+      float cij = C[i+j*n];
       for( int k = 0; k < n; k++ )
 	cij += A[i+k*n] * B[k+j*n];
       C[i+j*n] = cij;
-      }
+    }
+    }
 }
-/*
+    /*
+    cij = 0.0;
+    cij1 = 0.0;
+    cij2 = 0.0;
+    cij3 = 0.0;
+    cij4 = 0.0;
+    cij5 = 0.0;
+    cij6 = 0.0;
+    cij7 = 0.0;
+    __m128 zero = _mm_setzero_ps();
+    __m128 z;
+    float pSum[4];
+    float pSum1[4];
+    float pSum2[4];
+    float pSum3[4];
+
+  // For each row i of A 
+  for (i = 0; i < n; ++i) {
+    // For each column j of B 
+    for (j = 0; j < n/8*8; j+=8)
+    {
+      // Compute C(i,j)
+	cij = C[i+j*n];
+	cij1 = C[i+(j+1)*n];
+	cij2 = C[i+(j+2)*n];
+	cij3 = C[i+(j+3)*n];
+	cij4 = C[i+(j+4)*n];
+	cij5 = C[i+(j+5)*n];
+	cij6 = C[i+(j+6)*n];
+	cij7 = C[i+(j+7)*n];
+
+	//this will hold 4 floats which sum to the dot product
+	partialSum = _mm_setzero_ps();
+	partialSum1 = _mm_setzero_ps();
+	partialSum2 = _mm_setzero_ps();
+	partialSum3 = _mm_setzero_ps();
+	partialSum4 = _mm_setzero_ps();
+	partialSum5 = _mm_setzero_ps();
+	partialSum6 = _mm_setzero_ps();
+	partialSum7 = _mm_setzero_ps();
+
+      for(k = 0; k < n/4*4; k += 4) {
+	  x = _mm_loadu_ps(At + k + i*n);
+	  y = _mm_loadu_ps(B + k + j*n);
+	  z = _mm_mul_ps(x, y);
+	  //accumulate dot prduct
+	  y = _mm_loadu_ps(B + k + (j+1) *n);
+	  a = _mm_mul_ps(x, y);
+	  partialSum = _mm_add_ps(partialSum, z);
+
+	  //accumulate dot prduct
+	  y = _mm_loadu_ps(B + k + (j+2)*n);
+	  z = _mm_mul_ps(x, y);
+	  partialSum1 = _mm_add_ps(partialSum1, a);
+
+	  //accumulate dot prduct
+	  y = _mm_loadu_ps(B + k + (j+3)*n);
+	  a = _mm_mul_ps(x, y);
+	  partialSum2 = _mm_add_ps(partialSum2, z);
+
+	  //accumulate dot prduct
+	  y = _mm_loadu_ps(B + k + (j+4)*n);
+	  z = _mm_mul_ps(x, y);
+	  partialSum3 = _mm_add_ps(partialSum3, a);
+
+	  //accumulate dot prduct
+	  y = _mm_loadu_ps(B + k + (j+5) *n);
+	  a = _mm_mul_ps(x, y);
+	  partialSum4 = _mm_add_ps(partialSum4, z);
+
+	  //accumulate dot prduct
+	  y = _mm_loadu_ps(B + k + (j+6)*n);
+	  z = _mm_mul_ps(x, y);
+	  partialSum5 = _mm_add_ps(partialSum5, a);
+
+	  //accumulate dot prduct
+	  y = _mm_loadu_ps(B + k + (j+7)*n);
+	  a = _mm_mul_ps(x, y);
+	  partialSum6 = _mm_add_ps(partialSum6, z);
+
+	  //accumulate dot prduct
+	  partialSum7 = _mm_add_ps(partialSum7, a);
+
+      }
+      partialSum = _mm_hadd_ps(partialSum, zero);
+      partialSum1 = _mm_hadd_ps(partialSum1, zero);
+      partialSum2 = _mm_hadd_ps(partialSum2, zero);
+      partialSum3 = _mm_hadd_ps(partialSum3, zero);
+      partialSum4 = _mm_hadd_ps(partialSum4, zero);
+      partialSum5 = _mm_hadd_ps(partialSum5, zero);
+      partialSum6 = _mm_hadd_ps(partialSum6, zero);
+      partialSum7 = _mm_hadd_ps(partialSum7, zero);
+
+      partialSum = _mm_hadd_ps(partialSum, zero);
+      partialSum1 = _mm_hadd_ps(partialSum1, zero);
+      partialSum2 = _mm_hadd_ps(partialSum2, zero);
+      partialSum3 = _mm_hadd_ps(partialSum3, zero);
+      partialSum4 = _mm_hadd_ps(partialSum4, zero);
+      partialSum5 = _mm_hadd_ps(partialSum5, zero);
+      partialSum6 = _mm_hadd_ps(partialSum6, zero);
+      partialSum7 = _mm_hadd_ps(partialSum7, zero);
+
+      _mm_storeu_ps(pSum, partialSum);
+      _mm_storeu_ps(pSum1, partialSum1);
+      _mm_storeu_ps(pSum2, partialSum2);
+      _mm_storeu_ps(pSum3, partialSum3);
+
+	  cij += pSum[0];
+	  cij1 += pSum1[0];
+	  cij2 += pSum2[0];
+	  cij3 += pSum3[0];
+
+	  _mm_storeu_ps(pSum, partialSum4);
+      _mm_storeu_ps(pSum1, partialSum5);
+      _mm_storeu_ps(pSum2, partialSum6);
+      _mm_storeu_ps(pSum3, partialSum7);
+
+      cij4 += pSum[0];
+      cij5 + pSum1[0];
+      cij6 += pSum2[0];
+      cij7 += pSum3[0];
+
+      /*_mm_storeu_ps(pSum, partialSum);
+			_mm_storeu_ps(pSum1, partialSum1);
+			_mm_storeu_ps(pSum2, partialSum2);
+			_mm_storeu_ps(pSum3, partialSum3);
+			for (l = 0; l < 4; l++) {
+				cij += pSum[l];
+				cij1 += pSum1[l];
+				cij2 += pSum2[l];
+				cij3 += pSum3[l];
+			}
+			_mm_storeu_ps(pSum, partialSum4);
+			_mm_storeu_ps(pSum1, partialSum5);
+			_mm_storeu_ps(pSum2, partialSum6);
+			_mm_storeu_ps(pSum3, partialSum7);
+			for (l = 0; l < 4; l++) {
+				cij4 += pSum[l];
+				cij5 += pSum1[l];
+				cij6 += pSum2[l];
+				cij7 += pSum3[l];
+				}*/
+			//cleanup k
+/*			for (; k < n; k ++) {
+			    cij += At[k+i*n] * B[k+j*n];
+			    cij1 += At[k+i*n] * B[k+(j+1)*n];
+			    cij2 += At[k+i*n] * B[k+(j+2)*n];
+			    cij3 += At[k+i*n] * B[k+(j+3)*n];
+			    cij4 += At[k+i*n] * B[k+(j+4)*n];
+			    cij5 += At[k+i*n] * B[k+(j+5)*n];
+			    cij6 += At[k+i*n] * B[k+(j+6)*n];
+			    cij7 += At[k+i*n] * B[k+(j+7)*n];
+			}
+			C[i+j*n] = cij;
+			C[i+(j+1)*n] = cij1;
+			C[i+(j+2)*n] = cij2;
+			C[i+(j+3)*n] = cij3;
+			C[i+(j+4)*n] = cij4;
+			C[i+(j+5)*n] = cij5;
+			C[i+(j+6)*n] = cij6;
+			C[i+(j+7)*n] = cij7;
+			//count += 4; //for debug
+    }
+		//cleanup j
+    for (; j < n; j++) {
+	cij = C[i+j*n];
+	partialSum = _mm_setzero_ps();
+	for (k = 0; k < n/4*4; k+=4) {
+	    x = _mm_loadu_ps(At + k + i*n);
+	    y = _mm_loadu_ps(B + k + j*n);
+	    z = _mm_mul_ps(x, y);
+	    //accumulate dot prduct
+	    partialSum = _mm_add_ps(partialSum, z);
+	}
+	_mm_storeu_ps(pSum, partialSum);
+	for (l = 0; l < 4; l++) {
+	    cij += pSum[l];
+	}
+	for (; k < n; k++) {
+	    //printf(" %f $$$ %f \n", At[k+i*n], B[k + j*n]);
+	    //printf(" .. %d .. %d .. \n", k+i*n, k + j*n);
+	    cij += At[k+i*n] * B[k+j*n];
+	}
+	C[i+j*n] = cij;
+	//count += 1; //for debug
+    }
+  }
+  //if (127*127 == n*n) {
+		    //printf("  %d!:%d  ",count, n*n);
+  //		}
+  //printf("\n");
+  //printf("\n");
+
+}
+    /*
     // For each row i of A 
     for (; i < n; ++i) {
 	// For each column j of B 
@@ -357,7 +571,6 @@ void square_sgemm( int n, float *A, float *B, float *C ) {
 	    count += 1; //for debug
 	}
     }
-    printf(" \n\n\n %d !!! \n\n\n\n\n\n", count);
 }
 
 
