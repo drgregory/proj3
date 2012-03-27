@@ -108,7 +108,7 @@ void square_sgemm( int n, float *A, float *B, float *C ) {
 		c2 = _mm_add_ps(c2, partialSum6);
 		//cleanup k
 		if (k < n) {
-		    cij = 0.0;
+		    cij *= 0.0;
 		    cij1 = 0.0;
 		    cij2 = 0.0;
 		    cij3 = 0.0;
