@@ -7,10 +7,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
 #include <emmintrin.h>
 #include <x86intrin.h>
 
-void square_sgemm( int n, float *A, float *B, float *C ) {
+void square_sgemm( int n0, float *A, float *Bin, float *C ) {
     int i, j , k, l;
     float temp, temp1, temp2, temp3, temp4;
     __m128 x;
@@ -30,11 +31,13 @@ void square_sgemm( int n, float *A, float *B, float *C ) {
     float cij=0.0, cij1=0.0, cij2=0.0, cij3=0.0, cij4=0.0, cij5=0.0, cij6=0.0, cij7=0.0;
     __m128 c1;
     __m128 c2;
+	
+	int n = n0 + (n0%4);
 
     float *At = malloc(n*n*sizeof(float));
-
-    for (i = 0; i < n; i ++) {
-	for (j = 0; j < n/4*4; j += 4) {
+    float *B = malloc(n*n*sizeof(float));
+    for (i = 0; i < n0; i ++) {
+	for (j = 0; j < n0/4*4; j += 4) {
 
 	    x = _mm_loadu_ps(A + j + i*n);
 	    _MM_EXTRACT_FLOAT(temp, x, 0);
@@ -47,10 +50,52 @@ void square_sgemm( int n, float *A, float *B, float *C ) {
 	    At[i+(j+3)*n] = temp;
 
 	}
+	for (; j<n0; j++) {
+	    At[i + j*n0] = A[j+i*n0];
+	}
+	memset( At + i + j*n, 0.0, n0 * sizeof( float ));
+
+    }
+    for(; i<n; i ++) {
+    	for (j = 0; j < n0/4*4; j += 4) {
+	    
+	    memset( At + i + j*n, 0.0, n0 * sizeof( float ));
+
+	}
 	for (; j<n; j++) {
 	    At[i + j*n] = A[j+i*n];
 	}
+	memset( At + i + j*n, 0.0, n0 * sizeof( float ));
+
     }
+
+
+    for (j = 0; j < n0; j ++) {
+	for (i = 0; i < n0/4*4; i += 4) {
+
+	    x = _mm_loadu_ps(Bin + j + i*n);
+   		_mm_storeu_ps(B+j+i*n, x);
+	}
+	for (; j<n0; j++) {
+	    B[i + j*n0] = Bin[j+i*n0];
+	}
+	memset( At + i + j*n, 0.0, n0 * sizeof( float ));
+
+    }
+    for(; j<n; j ++) {
+    	for (i = 0; i < n0/4*4; i += 4) {
+	    
+	    memset( B + i + j*n, 0.0, n0 * sizeof( float ));
+
+	}
+	for (; i<n; i++) {
+	    B[i + j*n] = Bin[j+i*n];
+	}
+	memset( B + j + i*n, 0.0, n0 * sizeof( float ));
+
+    }
+
+
     // For each row i of A 
     for (i = 0; i < n/4*4; i+=4) {
 	// For each column j of B 
