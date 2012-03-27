@@ -299,7 +299,7 @@ void square_sgemm( int n, float *A, float *B, float *C ) {
 		//cleanup j
 		    // For each row i of A 
 
-    for (j = 0; j < n/4*4; j+=4)
+    for (j < n/4*4; j+=4)
     {
       // Compute C(i,j)
 
