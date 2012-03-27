@@ -78,7 +78,7 @@ void square_sgemm( int n0, float *A, float *Bin, float *C ) {
    		_mm_storeu_ps(B+j+i*n, x);
 	}
 	for (; j<n0; j++) {
-	    B[i + j*n0] = Bin[j+i*n0];
+	    B[i + j*n] = Bin[i+j*n];
 	}
 		for (; i < n ; i++) {
 		B[i+j*n] = 0.0;
