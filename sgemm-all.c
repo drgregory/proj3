@@ -35,7 +35,7 @@ void square_sgemm( int n, float *A, float *B, float *C ) {
 
     for (i = 0; i < n; i ++) {
 	for (j = 0; j < n/4*4; j += 4) {
-
+			
 	    x = _mm_loadu_ps(A + j + i*n);
 	    _MM_EXTRACT_FLOAT(temp, x, 0);
 	    At[i+j*n] = temp;
@@ -45,7 +45,7 @@ void square_sgemm( int n, float *A, float *B, float *C ) {
 	    At[i+(j+2)*n] = temp;
 	    _MM_EXTRACT_FLOAT(temp, x, 3);
 	    At[i+(j+3)*n] = temp;
-
+			
 	}
 	for (; j<n; j++) {
 	    At[i + j*n] = A[j+i*n];
@@ -69,7 +69,7 @@ void square_sgemm( int n, float *A, float *B, float *C ) {
 		partialSum5 = _mm_setzero_ps();
 		partialSum6 = _mm_setzero_ps();
 		partialSum7 = _mm_setzero_ps();
-
+	       
 		for(k = 0; k < n/4*4; k += 4) {
 		    a = _mm_loadu_ps(At + k + i*n);
 		    x = _mm_loadu_ps(B + k + j*n);
@@ -125,7 +125,7 @@ void square_sgemm( int n, float *A, float *B, float *C ) {
 			cij5 += At[k+(i+1)*n] * B[k+(j+1)*n];
 			cij6 += At[k+(i+2)*n] * B[k+(j+1)*n];
 			cij7 += At[k+(i+3)*n] * B[k+(j+1)*n];
-
+			
 		    }
 		    partialSum = _mm_set_ps(cij3, cij2, cij1, cij);
 		    partialSum1 = _mm_set_ps(cij7, cij6, cij5, cij4);
@@ -151,11 +151,11 @@ void square_sgemm( int n, float *A, float *B, float *C ) {
 		x = _mm_loadu_ps(At + k + (i+1)*n);
 		a = _mm_mul_ps(x, y);
 		partialSum1 = _mm_add_ps(partialSum1, a);
-
+		
 		x = _mm_loadu_ps(At + k + (i+2)*n);
 		a = _mm_mul_ps(x, y);
 		partialSum2 = _mm_add_ps(partialSum2, a);
-
+		
 		x = _mm_loadu_ps(At + k + (i+3)*n);
 		a = _mm_mul_ps(x, y);
 		partialSum3 = _mm_add_ps(partialSum3, a);
@@ -296,8 +296,7 @@ void square_sgemm( int n, float *A, float *B, float *C ) {
 			C[i+(j+6)*n] = cij6;
 			C[i+(j+7)*n] = cij7;
     }
-
-    //cleanup j even more
+		//cleanup j
     for (; j < n; j++) {
 	cij = C[i+j*n];
 	partialSum = _mm_setzero_ps();
@@ -321,4 +320,3 @@ void square_sgemm( int n, float *A, float *B, float *C ) {
   }
     free(At);
 }
-
