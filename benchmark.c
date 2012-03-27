@@ -56,7 +56,7 @@ int main( int argc, char **argv )
   for (int isize = 0; isize < sizeof(test_sizes)/sizeof(test_sizes[0]); ++isize)
   {
     int n = test_sizes[isize];
-	if (n % 4 == 3) {
+	//if (n % 4 == 3) {
     /* Create and fill 3 random matrices A,B,C*/
 
     float *A = malloc(n*n*sizeof(float));
@@ -112,7 +112,7 @@ int main( int argc, char **argv )
     free(A);
     free(B);
     free(C);
-  }
+  //}
   }
 
   return 0;
