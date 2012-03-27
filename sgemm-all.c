@@ -363,4 +363,5 @@ void square_sgemm( int n0, float *A, float *Bin, float *C ) {
     }
   }
     free(At);
+    free(B);
 }
