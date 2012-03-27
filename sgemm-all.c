@@ -298,8 +298,7 @@ void square_sgemm( int n, float *A, float *B, float *C ) {
     }
 		//cleanup j
 		    // For each row i of A 
-    for (;i < n; ++i) {
-    // For each column j of B 
+
     for (j = 0; j < n/4*4; j+=4)
     {
       // Compute C(i,j)
@@ -372,7 +371,6 @@ void square_sgemm( int n, float *A, float *B, float *C ) {
 			C[i+(j+1)*n] = cij1;
 			C[i+(j+2)*n] = cij2;
 			C[i+(j+3)*n] = cij3;
-    }
     }
     //cleanup j even more
     for (; j < n; j++) {
