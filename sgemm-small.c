@@ -5,7 +5,7 @@
 #include <x86intrin.h>
 
 void square_sgemm( int n, float *A, float *B, float *C ) {
-  int f, g, h, i, j , k, l;
+  int f, g, h, i, j , k, l, alpha, beta, gamma;
   int blockI = 64, blockJ = 64, blockK = 64;
 //  if (n < 300) {
 //      blockI = 64;
@@ -119,13 +119,13 @@ void square_sgemm( int n, float *A, float *B, float *C ) {
           }
 					//k cleanup
 					if (k < n) {
-						for(i = g; i < g + blockI; i ++) {
-							for (j = h; j < h + blockJ; j++) {
-								cij = C[i+j*n];
-								for (k = f; k < n; k++) {
-									cij += At[k+i*n] * B[k+j*n];
+						for(alpha = g; alpha < g + blockI; alpha ++) {
+							for (beta = h; beta < h + blockJ; beta++) {
+								cij = C[alpha+beta*n];
+								for (gamma = f; gamma < n; gamma++) {
+									cij += At[gamma+alpha*n] * B[gamma+beta*n];
 								}
-								C[i+j*n] = cij;
+								C[alpha+beta*n] = cij;
 							}
 						}
 					}	
