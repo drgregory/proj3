@@ -116,7 +116,7 @@ void square_sgemm( int n, float *A, float *B, float *C ) {
 		    cij5 = 0.0;
 		    cij6 = 0.0;
 		    cij7 = 0.0;
-		    for (; k < n; k ++) {
+		    for (; k < n/4*4; k += 4) {
 			cij += At[k+i*n] * B[k+j*n];
 			cij1 += At[k+(i+1)*n] * B[k+j*n];
 			cij2 += At[k+(i+2)*n] * B[k+j*n];
@@ -125,7 +125,45 @@ void square_sgemm( int n, float *A, float *B, float *C ) {
 			cij5 += At[k+(i+1)*n] * B[k+(j+1)*n];
 			cij6 += At[k+(i+2)*n] * B[k+(j+1)*n];
 			cij7 += At[k+(i+3)*n] * B[k+(j+1)*n];
+			
+			cij += At[k+1+i*n] * B[k+1+j*n];
+			cij1 += At[k+1+(i+1)*n] * B[k+1+j*n];
+			cij2 += At[k+1+(i+2)*n] * B[k+1+j*n];
+			cij3 += At[k+1+(i+3)*n] * B[k+1+j*n];
+			cij4 += At[k+1+i*n] * B[k+1+(j+1)*n];
+			cij5 += At[k+1+(i+1)*n] * B[k+1+(j+1)*n];
+			cij6 += At[k+1+(i+2)*n] * B[k+1+(j+1)*n];
+			cij7 += At[k+1+(i+3)*n] * B[k+1+(j+1)*n];
+			
+			cij += At[k+2+i*n] * B[k+2+j*n];
+			cij1 += At[k+2+(i+1)*n] * B[k+2+j*n];
+			cij2 += At[k+2+(i+2)*n] * B[k+2+j*n];
+			cij3 += At[k+2+(i+3)*n] * B[k+2+j*n];
+			cij4 += At[k+2+i*n] * B[k+2+(j+1)*n];
+			cij5 += At[k+2+(i+1)*n] * B[k+2+(j+1)*n];
+			cij6 += At[k+2+(i+2)*n] * B[k+2+(j+1)*n];
+			cij7 += At[k+2+(i+3)*n] * B[k+2+(j+1)*n];
+			
+			cij += At[k+3+i*n] * B[k+3+j*n];
+			cij1 += At[k+3+(i+1)*n] * B[k+3+j*n];
+			cij2 += At[k+3+(i+2)*n] * B[k+3+j*n];
+			cij3 += At[k+3+(i+3)*n] * B[k+3+j*n];
+			cij4 += At[k+3+i*n] * B[k+3+(j+1)*n];
+			cij5 += At[k+3+(i+1)*n] * B[k+3+(j+1)*n];
+			cij6 += At[k+3+(i+2)*n] * B[k+3+(j+1)*n];
+			cij7 += At[k+3+(i+3)*n] * B[k+3+(j+1)*n];
+			
 			}
+		for (; k < n; k ++) {
+			cij += At[k+i*n] * B[k+j*n];
+			cij1 += At[k+(i+1)*n] * B[k+j*n];
+			cij2 += At[k+(i+2)*n] * B[k+j*n];
+			cij3 += At[k+(i+3)*n] * B[k+j*n];
+			cij4 += At[k+i*n] * B[k+(j+1)*n];
+			cij5 += At[k+(i+1)*n] * B[k+(j+1)*n];
+			cij6 += At[k+(i+2)*n] * B[k+(j+1)*n];
+			cij7 += At[k+(i+3)*n] * B[k+(j+1)*n];
+		}
 		    partialSum = _mm_set_ps(cij3, cij2, cij1, cij);
 		    partialSum1 = _mm_set_ps(cij7, cij6, cij5, cij4);
 		    c1 = _mm_add_ps(c1, partialSum);
