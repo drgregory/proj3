@@ -11,7 +11,7 @@
 #include <x86intrin.h>
 
 void square_sgemm( int n, float *A, float *B, float *C ) {
-    int i, j , k, l, dog, cat, lion;
+    int i, j , k, l;
     float temp, temp1, temp2, temp3, temp4;
     __m128 x;
     __m128 y;
