@@ -128,12 +128,13 @@ void square_sgemm( int n, float *A, float *B, float *C ) {
 			cij6 += At[k+(i+2)*n] * B[k+(j+1)*n];
 			cij7 += At[k+(i+3)*n] * B[k+(j+1)*n];*/
 		}
+				    partialSum = _mm_set_ps(cij3, cij2, cij1, cij);
+
 			k = tempCounter;
 			cij = 0.0;
 			cij1 = 0.0;
 			cij2 = 0.0;
 			cij3 = 0.0;
-		    partialSum = _mm_set_ps(cij3, cij2, cij1, cij);
 		    	    for (; k < n; k ++) {
 			cij += At[k+i*n] * B[k+(j+1)*n];
 			cij1 += At[k+(i+1)*n] * B[k+(j+1)*n];
