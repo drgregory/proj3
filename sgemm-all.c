@@ -31,7 +31,8 @@ void square_sgemm( int n0, float *A, float *Bin, float *C ) {
     register float cij=0.0, cij1=0.0, cij2=0.0, cij3=0.0, cij4=0.0, cij5=0.0, cij6=0.0, cij7=0.0;
     __m128 c1;
     __m128 c2;
-	
+		n = n0 + n0%4;
+
     float *At = malloc(n*n*sizeof(float));
 	float *B = malloc(n*n*sizeof(float));
     /*for (i = 0; i < n; i ++) {
@@ -52,7 +53,6 @@ void square_sgemm( int n0, float *A, float *Bin, float *C ) {
 			At[i + j*n] = A[j+i*n];
 		}
     }*/
-	n = n0 + n0%4;
 	for (i = 0; i < n0; i ++) {
 		for (j = 0; j < n0; j ++) {
 			At[i + j*n] = A[j + i*n];
@@ -338,6 +338,7 @@ void square_sgemm( int n0, float *A, float *Bin, float *C ) {
 			C[i+j*n0] = cij;
 		}
 	}
+	free(B);
     free(At);
 }
 
