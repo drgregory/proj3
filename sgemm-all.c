@@ -13,7 +13,6 @@
 
 void square_sgemm( int n0, float *A, float *Bin, float *C ) {
     register int i, j , k, l, n;
-	int remainder;
     float temp, temp1, temp2, temp3, temp4;
     __m128 x;
     __m128 y;
@@ -53,8 +52,7 @@ void square_sgemm( int n0, float *A, float *Bin, float *C ) {
 			At[i + j*n] = A[j+i*n];
 		}
     }*/
-	remainder = n0%4;
-	n = n0 + remainder;
+	n = n0 + n0%4;
 	for (i = 0; i < n0; i ++) {
 		for (j = 0; j < n0; j ++) {
 			At[i + j*n] = A[j + i*n];
@@ -65,7 +63,7 @@ void square_sgemm( int n0, float *A, float *Bin, float *C ) {
 			B[i + j*n] = 0.0;
 		}
 	}
-	for (; i < n; i ++ {
+	for (; i < n; i ++) {
 		for (j = 0; j < n; j ++) {
 			At[i +j*n] = 0.0;
 			B[i + j*n] = 0.0;
