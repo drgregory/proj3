@@ -117,7 +117,7 @@ void square_sgemm( int n, float *A, float *B, float *C ) {
 		    cij5 = 0.0;
 		    cij6 = 0.0;
 		    cij7 = 0.0;
-		    for (; k < n/2*2; k +=2) {
+		    for (; k < n; k ++) {
 			cij += At[k+i*n] * B[k+j*n];
 			cij1 += At[k+(i+1)*n] * B[k+j*n];
 			cij2 += At[k+(i+2)*n] * B[k+j*n];
