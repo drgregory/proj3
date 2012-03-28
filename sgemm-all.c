@@ -12,7 +12,7 @@
 #include <x86intrin.h>
 
 void square_sgemm( int n, float *A, float *B, float *C ) {
-    register int i, j , k, l;
+    register int i, j , k, l, tempCounter;
     float temp, temp1, temp2, temp3, temp4;
     __m128 x;
     __m128 y;
@@ -113,10 +113,11 @@ void square_sgemm( int n, float *A, float *B, float *C ) {
 		    cij1 = 0.0;
 		    cij2 = 0.0;
 		    cij3 = 0.0;
-		    cij4 = 0.0;
+		    /*cij4 = 0.0;
 		    cij5 = 0.0;
 		    cij6 = 0.0;
-		    cij7 = 0.0;
+		    cij7 = 0.0;*/
+		    tempCounter = k;
 		    for (; k < n; k ++) {
 			cij += At[k+i*n] * B[k+j*n];
 			cij1 += At[k+(i+1)*n] * B[k+j*n];
@@ -127,6 +128,11 @@ void square_sgemm( int n, float *A, float *B, float *C ) {
 			cij6 += At[k+(i+2)*n] * B[k+(j+1)*n];
 			cij7 += At[k+(i+3)*n] * B[k+(j+1)*n];*/
 		}
+			k = tempCounter;
+			cij = 0.0;
+			cij1 = 0.0;
+			cij2 = 0.0;
+			cij3 = 0.0;
 		    partialSum = _mm_set_ps(cij3, cij2, cij1, cij);
 		    	    for (; k < n; k ++) {
 			cij += At[k+i*n] * B[k+(j+1)*n];
