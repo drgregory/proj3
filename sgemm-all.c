@@ -12,8 +12,8 @@
 #include <x86intrin.h>
 
 void square_sgemm( int n, float *A, float *B, float *C ) {
-    static int i, j , k, l;
-    static float temp, temp1, temp2, temp3, temp4;
+    int i, j , k, l;
+    float temp, temp1, temp2, temp3, temp4;
     __m128 x;
     __m128 y;
     __m128 a;
