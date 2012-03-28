@@ -12,8 +12,8 @@
 #include <x86intrin.h>
 
 void square_sgemm( int n, float *A, float *B, float *C ) {
-    int i, j , k, l;
-    float temp, temp1, temp2, temp3, temp4;
+    register int i, j , k, l;
+    register float temp, temp1, temp2, temp3, temp4;
     __m128 x;
     __m128 y;
     __m128 a;
@@ -28,7 +28,7 @@ void square_sgemm( int n, float *A, float *B, float *C ) {
     __m128 partialSum5;
     __m128 partialSum6;
     __m128 partialSum7;
-    float cij=0.0, cij1=0.0, cij2=0.0, cij3=0.0, cij4=0.0, cij5=0.0, cij6=0.0, cij7=0.0;
+    register float cij=0.0, cij1=0.0, cij2=0.0, cij3=0.0, cij4=0.0, cij5=0.0, cij6=0.0, cij7=0.0;
     __m128 c1;
     __m128 c2;
 	
