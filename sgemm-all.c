@@ -113,35 +113,24 @@ void square_sgemm( int n, float *A, float *B, float *C ) {
 		    cij1 = 0.0;
 		    cij2 = 0.0;
 		    cij3 = 0.0;
-		    /*cij4 = 0.0;
+		    cij4 = 0.0;
 		    cij5 = 0.0;
 		    cij6 = 0.0;
-		    cij7 = 0.0;*/
-		    tempCounter = k;
+		    cij7 = 0.0;
 		    for (; k < n; k ++) {
 			cij += At[k+i*n] * B[k+j*n];
 			cij1 += At[k+(i+1)*n] * B[k+j*n];
 			cij2 += At[k+(i+2)*n] * B[k+j*n];
 			cij3 += At[k+(i+3)*n] * B[k+j*n];
-			/*cij4 += At[k+i*n] * B[k+(j+1)*n];
+			cij4 += At[k+i*n] * B[k+(j+1)*n];
 			cij5 += At[k+(i+1)*n] * B[k+(j+1)*n];
 			cij6 += At[k+(i+2)*n] * B[k+(j+1)*n];
-			cij7 += At[k+(i+3)*n] * B[k+(j+1)*n];*/
+			cij7 += At[k+(i+3)*n] * B[k+(j+1)*n];
 		}
 				    partialSum = _mm_set_ps(cij3, cij2, cij1, cij);
 
-			k = tempCounter;
-			cij = 0.0;
-			cij1 = 0.0;
-			cij2 = 0.0;
-			cij3 = 0.0;
-		    	    for (; k < n; k ++) {
-			cij += At[k+i*n] * B[k+(j+1)*n];
-			cij1 += At[k+(i+1)*n] * B[k+(j+1)*n];
-			cij2 += At[k+(i+2)*n] * B[k+(j+1)*n];
-			cij3 += At[k+(i+3)*n] * B[k+(j+1)*n];
-		    	    }
-		    partialSum1 = _mm_set_ps(cij3, cij2, cij1, cij);
+			
+		    partialSum1 = _mm_set_ps(cij7, cij6, cij5, cij4);
 		    c1 = _mm_add_ps(c1, partialSum);
 		    c2 = _mm_add_ps(c2, partialSum1);
 		    }
