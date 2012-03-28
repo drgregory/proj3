@@ -12,7 +12,7 @@
 #include <x86intrin.h>
 
 void square_sgemm( int n, float *A, float *B, float *C ) {
-    register int i, j , k, l, tempCounter;
+    int i, j , k, l, tempCounter;
     float temp, temp1, temp2, temp3, temp4;
     __m128 x;
     __m128 y;
