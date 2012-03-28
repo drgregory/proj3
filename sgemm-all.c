@@ -163,7 +163,7 @@ void square_sgemm( int n, float *A, float *B, float *C ) {
 	    partialSum = _mm_hadd_ps(partialSum, partialSum1);
 	    partialSum2 = _mm_hadd_ps(partialSum2, partialSum3);
 	    c1 = _mm_add_ps(_mm_hadd_ps(partialSum, partialSum2), c1);
-	    temp1 *= 0.0;
+	    temp1 = 0.0;
 	    temp2 = 0.0;
 	    temp3 = 0.0;
 	    temp4 = 0.0;
